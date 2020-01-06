@@ -1,1 +1,26 @@
+# Over operator in SQL
 
+-- Case 1:
+SELECT row_number() over(ORDER BY prod.productid) rownum, cat.CategoryName, prod.ProductName
+FROM Categories cat
+INNER JOIN products prod ON cat.CategoryID=prod.CategoryID
+
+-- Case 2:
+SELECT  ROW_NUMBER() over(PARTITION BY cat.categoryid ORDER BY prod.productid) ProductWiseRowNum,
+row_number() over(ORDER BY (SELECT 1)) rownum, cat.CategoryName,prod.ProductName
+FROM Categories cat
+INNER JOIN products prod ON cat.CategoryID=prod.CategoryID
+
+-- Case 3:
+SELECT dense_rank() over(ORDER BY cat.categoryid) CategoryWiseRowNum, cat.CategoryName,
+ROW_NUMBER() over(PARTITION BY cat.categoryid
+ORDER BY prod.productid) ProductWiseRowNum, prod.ProductName
+FROM Categories cat
+INNER JOIN products prod ON cat.CategoryID=prod.CategoryID
+
+-- Case 4:
+SELECT prod.ProductName,
+sum(ord.Quantity*ord.UnitPrice) [TotalAmout]
+FROM [Order Details] ord
+INNER JOIN Products prod ON ord.ProductID=prod.ProductID
+GROUP BY prod.ProductName 
