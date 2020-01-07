@@ -1,11 +1,27 @@
 # Running totals: Aggregation with Over Operator
 
-SELECT productname,
-       TotalAmout,
-       sum([TotalAmout]) OVER(ORDER BY productname) AS RunningTotal
+-- Case 1:
+SELECT productname,TotalAmout,
+sum([TotalAmout]) OVER(ORDER BY productname) AS RunningTotal
 FROM
-  (SELECT prod.ProductName,
-          sum(ord.Quantity*ord.UnitPrice) [TotalAmout]
-   FROM [Order Details] ord
-   INNER JOIN Products prod ON ord.ProductID=prod.ProductID
-   GROUP BY prod.ProductName) t
+(SELECT prod.ProductName,
+sum(ord.Quantity*ord.UnitPrice) [TotalAmout]
+FROM [Order Details] ord
+INNER JOIN Products prod ON ord.ProductID=prod.ProductID
+GROUP BY prod.ProductName) t
+   
+   
+-- Case 2:
+Changed back to value for category while maintaining the running total part of the original query
+
+SELECT cat.CategoryName, productname, TotalAmout,
+sum([TotalAmout]) over(PARTITION BY cat.categoryid
+                  ORDER BY productname) AS RunningTotal
+FROM
+(SELECT prod.CategoryID, prod.ProductName,
+sum(ord.Quantity*ord.UnitPrice) [TotalAmout]
+FROM [Order Details] ord
+INNER JOIN Products prod ON ord.ProductID=prod.ProductID
+GROUP BY prod.ProductName,
+prod.CategoryID) t
+INNER JOIN Categories cat ON t.CategoryID=cat.CategoryID
