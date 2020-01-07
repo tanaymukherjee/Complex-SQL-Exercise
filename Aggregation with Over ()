@@ -1,1 +1,11 @@
+# Running totals: Aggregation with Over Operator
 
+SELECT productname,
+       TotalAmout,
+       sum([TotalAmout]) OVER(ORDER BY productname) AS RunningTotal
+FROM
+  (SELECT prod.ProductName,
+          sum(ord.Quantity*ord.UnitPrice) [TotalAmout]
+   FROM [Order Details] ord
+   INNER JOIN Products prod ON ord.ProductID=prod.ProductID
+   GROUP BY prod.ProductName) t
