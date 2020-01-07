@@ -1,1 +1,34 @@
+# Lead and Lag fucntion
 
+-- Case 1:
+SELECT cust.CustomerID,
+       cust.CompanyName,
+       ord.OrderDate,
+       LEAD(ord.OrderDate) over(PARTITION BY cust.companyname
+                                ORDER BY ord.orderdate) [NextOrderDate],
+       LAG(ord.OrderDate) over(PARTITION BY cust.companyname
+                                ORDER BY ord.orderdate) [PreviousOrderDate]
+FROM orders ord
+INNER JOIN Customers cust ON ord.CustomerID=cust.CustomerID 
+
+   
+   
+-- Case 2:
+WITH CTE AS
+  (SELECT cust.CustomerID,
+          cust.CompanyName,
+          ord.OrderDate,
+          LEAD(ord.OrderDate) over(PARTITION BY cust.companyname
+                                   ORDER BY ord.orderdate) [NextOrderDate],
+                              LAG(ord.OrderDate) over(PARTITION BY cust.companyname
+                                                      ORDER BY ord.orderdate) [PreviousOrderDate]
+   FROM orders ord
+   INNER JOIN Customers cust ON ord.CustomerID=cust.CustomerID)
+SELECT CustomerID,
+       CompanyName,
+       ISNULL(DATEDIFF(dd,OrderDate,isnull(NextOrderDate,OrderDate)),0) [NextDateDifference],
+	   ISNULL(DATEDIFF(dd,isnull(PreviousOrderDate,OrderDate),OrderDate),0) [PreviousDateDifference],
+       OrderDate,
+       NextOrderDate,
+	   PreviousOrderDate
+FROM CTE
