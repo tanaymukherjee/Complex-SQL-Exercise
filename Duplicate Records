@@ -1,1 +1,11 @@
 
+-- Finding Duplicates Record
+
+WITH CTE
+AS
+(
+SELECT ROW_NUMBER() OVER(ORDER BY (Select 1)) [RowNum],* FROM EMPLOYEE
+)
+SELECT * FROM CTE c1
+WHERE
+1<(SELECT count(c2.RowNum) FROM CTE c2 WHERE c1.EmpId=c2.EmpId)
