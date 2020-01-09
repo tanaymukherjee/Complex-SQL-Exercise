@@ -1,1 +1,37 @@
+DECLARE @PageNumber int=3 DECLARE @PageSize int=10 DECLARE @StartPage int,@EndPage int
+SET @StartPage=@PageNumber*@PageSize-@PageSize+1
+SET @EndPage=@PageNumber*@PageSize
 
+SELECT *
+FROM
+  (SELECT ROW_NUMBER() Over(ORDER BY ord.orderid) AS RowNum,*
+   FROM orders ord) t
+WHERE t.RowNum BETWEEN @StartPage AND @EndPage
+
+SELECT @StartPage,@EndPage
+
+
+DECLARE @PageNumber int=3 DECLARE @PageSize int=10 DECLARE @StartPage int,@EndPage int
+SET @StartPage=@PageNumber*@PageSize-@PageSize+1
+SET @EndPage=@PageNumber*@PageSize
+
+SELECT *
+FROM
+  (SELECT ROW_NUMBER() Over(ORDER BY(SELECT 1)) AS RowNum,*
+   FROM orders ord) t
+WHERE t.RowNum BETWEEN @StartPage AND @EndPage
+
+SELECT *
+   FROM orders ord
+ ORDER BY ord.orderid
+OFFSET 20 ROWS
+FETCH NEXT 10 ROWS ONLY
+
+DECLARE @PageNumber int=3 DECLARE @PageSize int=10 DECLARE @StartPage int,@EndPage int
+SET @StartPage=@PageNumber*@PageSize-@PageSize+1
+SET @EndPage=@PageNumber*@PageSize
+SELECT *
+   FROM orders ord
+ ORDER BY ord.orderid
+OFFSET @PageNumber*@PageSize-@PageSize ROWS
+FETCH NEXT @PageNumber*@PageSize ROWS ONLY
