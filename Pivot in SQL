@@ -1,1 +1,16 @@
+-- PIVOT Count of employee joining as per YEAR
 
+SELECT	*
+FROM	
+		(
+		  SELECT	Department,
+					YEAR(DOJ) AS [Year],
+					COUNT(EmpId) AS [EmployeeCount]
+		  FROM		Employee
+		  GROUP BY	Department, YEAR(DOJ)
+		) TT
+		PIVOT 
+		(
+			  SUM([EmployeeCount])
+			  FOR [Year] IN ([2006],[2007],[2008],[2009],[2010],[2011])
+		) PT
