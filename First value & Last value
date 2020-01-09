@@ -1,1 +1,47 @@
+SELECT cust.CustomerID,
+       cust.CompanyName,
+       ord.OrderDate,
+       First_Value(ord.OrderDate) over(PARTITION BY cust.companyname
+                                ORDER BY (select 1)) [FirstOrderDate],
+       Last_Value(ord.OrderDate) over(PARTITION BY cust.companyname
+                                ORDER BY (select 1)) [LastOrderDate]
+FROM orders ord
+INNER JOIN Customers cust ON ord.CustomerID=cust.CustomerID 
 
+
+WITH CTE AS
+  (SELECT cust.CustomerID,
+          cust.CompanyName,
+          ord.OrderDate,
+          LEAD(ord.OrderDate) over(PARTITION BY cust.companyname
+                                   ORDER BY ord.orderdate) [NextOrderDate],
+                              LAG(ord.OrderDate) over(PARTITION BY cust.companyname
+                                                      ORDER BY ord.orderdate) [PreviousOrderDate]
+   FROM orders ord
+   INNER JOIN Customers cust ON ord.CustomerID=cust.CustomerID)
+,
+CTE2
+AS(
+SELECT CustomerID,CompanyName,AVG(NextDateDifference) [AvgDiff] 
+,IIF(AVG(NextDateDifference)<30,'1',IIF(AVG(NextDateDifference)>=30 and AVG(NextDateDifference)<90,'2',
+IIF(AVG(NextDateDifference)>=90,'3','4'))) AS [Tag]
+ FROM (SELECT CustomerID,
+       CompanyName,
+       ISNULL(DATEDIFF(dd,OrderDate,isnull(NextOrderDate,OrderDate)),0) [NextDateDifference],
+	   ISNULL(DATEDIFF(dd,isnull(PreviousOrderDate,OrderDate),OrderDate),0) [PreviousDateDifference],
+       OrderDate,
+       NextOrderDate,
+	   PreviousOrderDate FROM CTE) t
+GROUP BY CustomerID,CompanyName
+) 
+SELECT customerid,CompanyName,AvgDiff,
+CHOOSE([Tag],'Important','Recommended','Normal','Ignore') [Flag]
+ from CTE2
+
+
+ select iif(1=2,'a','b')
+ select choose(3,'hello','friend','ghost')
+ declare @var1 varchar(10),@var2 varchar(10)
+ set @var1='Best'
+ set @var2=null
+ select @var1 + ' ' + @var2,concat(@var1,' ',@var2)
