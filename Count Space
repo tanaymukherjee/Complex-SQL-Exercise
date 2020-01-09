@@ -1,1 +1,5 @@
 
+DECLARE 	@strName VARCHAR(1000)
+SET		@strName = ' White Space is where the world and all distraction falls away '
+PRINT		(LEN(@strName) - LEN(REPLACE(@strName, ' ', '')))
+PRINT		(DATALENGTH(@strName) - DATALENGTH(REPLACE(@strName, ' ', '')))
