@@ -1,4 +1,6 @@
-You can use window functions to identify what percentile (or quartile, or any other subdivision) a given row falls into. The syntax is NTILE(*# of buckets*). In this case, ORDER BY determines which column to use to determine the quartiles (or whatever number of 'tiles you specify). For example:
+You can use window functions to identify what percentile (or quartile, or any other subdivision) a given row falls into.
+The syntax is NTILE(*# of buckets*). In this case, ORDER BY determines which column to use to determine the quartiles
+(or whatever number of 'tiles you specify). For example:
 
 SELECT start_terminal,
        duration_seconds,
@@ -16,6 +18,12 @@ SELECT start_terminal,
  ORDER BY start_terminal, duration_seconds
  
  NOTE:
- Looking at the results from the query above, you can see that the percentile column doesn't calculate exactly as you might expect. If you only had two records and you were measuring percentiles, you'd expect one record to define the 1st percentile, and the other record to define the 100th percentile. Using the NTILE function, what you'd actually see is one record in the 1st percentile, and one in the 2nd percentile. You can see this in the results for start_terminal 31000—the percentile column just looks like a numerical ranking. If you scroll down to start_terminal 31007, you can see that it properly calculates percentiles because there are more than 100 records for that start_terminal. If you're working with very small windows, keep this in mind and consider using quartiles or similarly small bands.
+ Looking at the results from the query above, you can see that the percentile column doesn't calculate exactly
+ as you might expect. If you only had two records and you were measuring percentiles, you'd expect one record to define
+ the 1st percentile, and the other record to define the 100th percentile. Using the NTILE function, what you'd actually
+ see is one record in the 1st percentile, and one in the 2nd percentile. You can see this in the results for
+ start_terminal 31000—the percentile column just looks like a numerical ranking. If you scroll down to start_terminal 31007,
+ you can see that it properly calculates percentiles because there are more than 100 records for that start_terminal.
+ If you're working with very small windows, keep this in mind and consider using quartiles or similarly small bands.
  
  Ref: https://mode.com/sql-tutorial/sql-window-functions/
