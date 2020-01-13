@@ -170,3 +170,15 @@ COUNT(Field1) = COUNT(Field2) = 3
 
 COUNT(Field3) = 2 
 COUNT(DISTINCT Field3) = 1 -- Ignore duplicates
+
+
+-- If there are two tables emp1 and emp2, and both have common record. How can I fetch all the recods but common records only once?
+(Select * from emp) Union (Select * from emp1)
+
+
+-- How to fetch only common records from two tables emp and emp1?
+(Select * from emp) Intersect (Select * from emp1)
+
+
+-- How can I retrive all records of emp1 those should not present in emp2?
+(Select * from emp) Minus (Select * from emp1)
