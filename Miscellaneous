@@ -1,1 +1,111 @@
+-- What is the Query to Find Second Highest Salary of Employee?
+select distinct salary from Empoyee e1
+where 2 = (select count(distinct salary) from Employee e2 where  e1.salary <= e2.salary);
 
+
+-- Query to find duplicate rows?
+Select * from Employee a 
+where rowid <>( select max(rowid) from Employee b where a.Employee_num=b.Employee_num);
+
+
+-- What is the Query to fetch first record from Employee table?
+ Select * from Employee where Rownum =1;
+ 
+ 
+ -- What is the Query to display first 5 Records from Employee table?
+ Select * from Employee where Rownum <= 5;
+ 
+ 
+ -- What is the Query to display last 5 Records from Employee table?
+Select * from Employee e where rownum <=5
+union
+select * from (Select * from Employee e order by rowid desc) where rownum <=5;
+
+
+-- What is Query to display Nth Record from Employee table?
+select * from ( select a.*, rownum rnum from ( YOUR_QUERY_GOES_HERE — including the order by ) a 
+where rownum <= N_ROWS ) where rnum >= N_ROWS;
+
+
+-- Display only the odd rows in a table?
+Select * from(Select rownum as rno,E.* from Employee E) where Mod(rno,2)=1;
+
+
+-- Display only the even rows in a table?
+Select * from(Select rownum as rno,E.* from Employee) where Mod(rno,2)=0;
+
+
+-- How to fetch 3rd highest salary using Rank Function?
+select * from (Select Dense_Rank() over ( order by  salary desc) as Rnk,E.* from Employee E) where Rnk=3;
+
+
+-- Display first 50% records from Employee table?
+select rownum, e.* from emp e where rownum<=(select count(*)/2 from emp);
+
+
+-- Display last 50% records from Employee table?
+Select rownum,E.* from Employee E
+minus
+Select rownum,E.* from Employee E where rownum<=(Select count(*)/2) from Employee);
+
+
+-- How to get distinct records from the table without using distinct keyword?
+select * from Employee a where  rowid = (select max(rowid) from Employee b
+where  a.Employee_no=b.Employee_no);
+
+
+-- how to write sql query for the below scenario:
+T
+A
+N
+A
+Y
+i.e., splitting into multiple columns a string using sql?
+
+Select Substr(‘TANAY’,Level,1) From Dual
+Connect By Level<= Length(‘TANAY’);
+
+
+-- How to display following using query:
+*
+**
+***
+i.e., a tree made of *s?
+
+SELECT lpad (‘*’, ROWNUM,’*’) FROM Table WHERE ROWNUM <4;
+
+
+-- How to add the email validation using only one query?
+User needs to use REGEXP_LIKE function for email validation.
+SELECT
+Email
+FROM
+Employee
+where NOT REGEXP_LIKE(Email, ‘[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}’, ‘i’);
+
+
+-- How to display 1 to 100 Numbers with query?
+Select level from dual connect by level <=100;
+
+
+-- How to find count of duplicate rows?
+Select rollno, count (rollno) from Student
+Group by rollno
+Having count (rollno)>1
+Order by count (rollno) desc;
+
+
+
+-- How to remove duplicate rows from table?
+Step1: Selecting Duplicate rows from table
+Select rollno FROM Student WHERE ROWID <>
+(Select max (rowid) from Student b where rollno=b.rollno);
+
+Step 2:  Delete duplicate rows
+Delete FROM Student WHERE ROWID <>
+(Select max (rowid) from Student b where rollno=b.rollno);
+
+
+-- How to Find the Joining date of Employee in YYYY-DAY-Date format.
+Select FIRST_NAME, to_char(joining_date,’YYYY’) JoinYear , 
+to_char(joining_date,’Mon’), to_char(joining_date,’dd’) from EMPLOYEES;
