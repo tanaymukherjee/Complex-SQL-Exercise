@@ -20,6 +20,7 @@ flag. This would be 1,000 rows of one integer and one character for the
 whole restaurant and would work pretty well, but we have that minimal
 storage requirement. Darn! 
 
+Answer:
  SELECT (R1.seat + 1) AS start,
  (MIN(R2.seat) - 1) AS finish
  FROM Restaurant AS R1
@@ -34,3 +35,100 @@ HAVING (R1.seat + 1) < MIN(R2.seat);
 
 
 -- Case 2:
+
+# Top Salespeople
+
+The three biggest sales and salespeople in each district. Let’s use this data:
+SalesData district_nbr sales_person sales_id sales_amt
+==========================================
+ 1 'Curly' 5 3.00
+ 1 'Harpo' 11 4.00
+ 1 'Larry' 1 50.00
+ 1 'Larry' 2 50.00
+ 1 'Larry' 3 50.00
+ 1 'Moe' 4 5.00
+ 2 'Dick' 8 5.00
+ 2 'Fred' 7 5.00
+ 2 'Harry' 6 5.00
+ 2 'Tom' 7 5.00
+ 3 'Irving' 10 5.00
+ 3 'Melvin' 9 7.00
+ 4 'Jenny' 15 20.00
+ 4 'Jessie' 16 10.00
+ 4 'Mary' 12 50.00
+ 4 'Oprah' 14 30.00
+ 4 'Sally' 13 40.00
+ 
+
+Answer:
+Unfortunately, there are some problems in the specification we got. Do
+we want the three largest sales (regardless of who made them) or the top
+three salespeople? There is a difference—look at district 1, where 'Larry'
+made all three of the largest sales, but the three best salespeople were
+'Larry', 'Moe', and 'Harpo'.
+What if more than three people sold exactly the same amount, as in
+district 2? If a district has less than three salespeople working in it, as in
+district 3, do we drop it from the report or not? Let us make the decision,
+since this is just a puzzle and not a production system, that the boss
+meant the three largest sales in each district, without regard to who the
+salespeople were. That query can be:
+SELECT *
+ FROM SalesData AS S0
+ WHERE sales_amt IN (SELECT S1.sales_amt
+ FROM SalesData AS S1
+ WHERE S0.district_nbr = S1.district_nbr
+ AND S0.sales_amt <= S1.sales_amt
+ HAVING COUNT(*) <= 3)
+ ORDER BY S0.district_nbr, S0.sales_person, S0.sales_id,
+S0.sales_amt;
+
+Results:
+district_nbr sales_person sales_id sales_amt
+====================================
+ 1 'Larry' 1 50.00
+ 1 'Larry' 2 50.00
+ 1 'Larry' 3 50.00
+ 3 'Irving' 10 5.00
+ 3 'Melvin' 9 7.00
+ 4 'Mary' 12 50.00
+ 4 'Oprah' 14 30.00
+ 4 'Sally' 13 40.00
+ 
+Now what if we wanted the top three salespeople in their districts,
+without regard to how many people were assigned to each district? We
+could modify the query like this:
+
+SELECT DISTINCT district_nbr, sales_person
+ FROM SalesData AS S0
+ WHERE sales_amt <= (SELECT MAX(S1.sales_amt)
+ FROM SalesData AS S1
+ WHERE S0.district_nbr = S1.district_nbr
+ AND S0.sales_amt <= S1.sales_amt
+ HAVING COUNT(DISTINCT S0.sales_amt) <= 3);
+and get these results. Please notice that you are getting the three largest
+sales.
+
+Results:
+district_nbr sales_person
+====================
+ 1 'Harpo'
+ 1 'Moe'
+ 1 'Larry'
+ 2 'Dick'
+ 2 'Fred'
+ 2 'Harry'
+ 2 'Tom'
+ 3 'Irving'
+ 3 'Melvin'
+ 4 'Oprah'
+ 4 'Sally'
+ 4 'Mary'
+ 
+Notice that four people are tied for the top three sales positions in
+district 2. Likewise, the lack of competition in district 3 gave us two
+salespeople in the top three. 
+
+
+--------------------
+
+
