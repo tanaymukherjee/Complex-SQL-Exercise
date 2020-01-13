@@ -95,7 +95,6 @@ Having count (rollno)>1
 Order by count (rollno) desc;
 
 
-
 -- How to remove duplicate rows from table?
 Step1: Selecting Duplicate rows from table
 Select rollno FROM Student WHERE ROWID <>
@@ -109,3 +108,65 @@ Delete FROM Student WHERE ROWID <>
 -- How to Find the Joining date of Employee in YYYY-DAY-Date format.
 Select FIRST_NAME, to_char(joining_date,’YYYY’) JoinYear , 
 to_char(joining_date,’Mon’), to_char(joining_date,’dd’) from EMPLOYEES;
+
+
+-- In a table have to find out which is max value, the table structure contains every columns have a numeric value.
+we have to find out among the columns which is the maximum value. The table structure look likes
+
+A  |  B | C
+12 | 34 | 22
+33 | 64 | 100
+45 | 14 | 76
+In a columns A,B,C the highest value is 100. That result we want achieve through a query.
+
+with result as
+(
+select max(A) as c1 from table
+union
+select max(B) as c1 from table
+union
+select max(C) as c1 from table
+)
+select max(c1) from result
+
+
+-- I need to return a column of credit card numbers from DB table 'orders' column is 'card_number'.
+They are in this format on the 'orders' table:
+1234-5678-9012-3456
+
+I need the SELECT statement to return with this:
+xxxx-xxxx-xxxx-3456
+
+SELECT CONCAT('xxxx-xxxx-xxxx-', RIGHT(card_number,4)) FROM orders
+RIGHT(card_number,4) gets the last 4 characters of card_number.
+It is concatenated to the end of the string 'xxxx-xxxx-xxxx-'
+
+
+-- From the above example select the data for card numbers without the hyphes?
+select replace(card_number,'-','') as new_card_number
+from orders
+
+
+-- If you have this table
+Table1:
+
+ Field1    Field2    Field3
+ ---------------------------
+   1         1         1
+  NULL      NULL      NULL
+   2         2        NULL
+   1         3         1
+   
+And we run count() on the table what do we see as an output?
+
+Query:
+SELECT COUNT(*), COUNT(Field1), COUNT(Field2), COUNT(DISTINCT Field3) FROM Table1
+
+Output:
+COUNT(*) = 4; -- count all rows, even null/duplicates
+
+count only rows without null values on that field
+COUNT(Field1) = COUNT(Field2) = 3
+
+COUNT(Field3) = 2 
+COUNT(DISTINCT Field3) = 1 -- Ignore duplicates
