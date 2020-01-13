@@ -224,4 +224,47 @@ SELECT *
 
 -- Case 4:
 
-# 
+# FIND THE MODE COMPUTATION
+
+The only descriptive statistical function in SQL is the simple average,
+AVG(). While it is a common statistic, it is not the only one. The mean,
+the median, and the mode are all ways of measuring “central tendency”
+in a set of values. The mode is the most common value in a column in a
+table. Let’s suppose that the table is named “Payroll” and has the
+check_nbr number and the amount of each check_nbr.
+CREATE TABLE Payroll
+(check_nbr INTEGER NOT NULL PRIMARY KEY,
+ check_amt DECIMAL(8,2) NOT NULL,
+ ... );
+
+What we want to see is the most common check amount and the
+number of occurrences on the payroll. How would you write this query?
+
+Answer:
+#1
+SELECT check_amt, COUNT(*)AS check_cnt
+ FROM Payroll
+ GROUP BY check_amt
+HAVING COUNT(*) = (SELECT MAX(check_cnt)
+ FROM (SELECT COUNT(*) AS check_cnt
+ FROM Payroll
+ GROUP BY check_amt));
+
+The innermost SELECT statement has to be expanded completely
+before it passes the grouped table to its immediate containing SELECT
+statement. That statement finds the MAX() and then passes that single
+number to the outermost SELECT.
+
+#2
+You will find that many of the current versions of SQL have a mode()
+function in them now as part of the upcoming OLAP extensions, so this
+is not much of a question anymore. We can effectively replace the
+subquery with an OLAP function call.
+
+SELECT check_amt,
+ COUNT(*)OVER (PARTITION BY check_amt)
+ AS check_cnt
+ FROM Payroll; 
+ 
+ 
+ --------------------
