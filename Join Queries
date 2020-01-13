@@ -1,1 +1,87 @@
+-- Simple Join syntax
+SELECT teams.conference AS conference,
+       AVG(players.weight) AS average_weight
+  FROM benn.college_football_players players
+  JOIN benn.college_football_teams teams
+    ON teams.school_name = players.school_name
+ GROUP BY teams.conference
+ ORDER BY AVG(players.weight) DESC
+ 
+ 
+ -- Joining tables with identical column names
+ SELECT players.*,
+       teams.*
+  FROM benn.college_football_players players
+  JOIN benn.college_football_teams teams
+    ON teams.school_name = players.school_name
+ 
+ 
+-- Left Join
+SELECT companies.permalink AS companies_permalink,
+       companies.name AS companies_name,
+       acquisitions.company_permalink AS acquisitions_permalink,
+       acquisitions.acquired_at AS acquired_date
+  FROM tutorial.crunchbase_companies companies
+  LEFT JOIN tutorial.crunchbase_acquisitions acquisitions
+    ON companies.permalink = acquisitions.company_permalink
+    
 
+-- Right Join
+SELECT companies.permalink AS companies_permalink,
+       companies.name AS companies_name,
+       acquisitions.company_permalink AS acquisitions_permalink,
+       acquisitions.acquired_at AS acquired_date
+  FROM tutorial.crunchbase_acquisitions acquisitions
+ RIGHT JOIN tutorial.crunchbase_companies companies
+    ON companies.permalink = acquisitions.company_permalink
+    
+    
+-- Filtering in the ON clause
+SELECT companies.permalink AS companies_permalink,
+       companies.name AS companies_name,
+       acquisitions.company_permalink AS acquisitions_permalink,
+       acquisitions.acquired_at AS acquired_date
+  FROM tutorial.crunchbase_companies companies
+  LEFT JOIN tutorial.crunchbase_acquisitions acquisitions
+    ON companies.permalink = acquisitions.company_permalink
+   AND acquisitions.company_permalink != '/company/1000memories'
+ ORDER BY 1
+ 
+ 
+-- Full Join with cases
+SELECT COUNT(CASE WHEN companies.permalink IS NOT NULL AND acquisitions.company_permalink IS NULL
+                  THEN companies.permalink ELSE NULL END) AS companies_only,
+       COUNT(CASE WHEN companies.permalink IS NOT NULL AND acquisitions.company_permalink IS NOT NULL
+                  THEN companies.permalink ELSE NULL END) AS both_tables,
+       COUNT(CASE WHEN companies.permalink IS NULL AND acquisitions.company_permalink IS NOT NULL
+                  THEN acquisitions.company_permalink ELSE NULL END) AS acquisitions_only
+  FROM tutorial.crunchbase_companies companies
+  FULL JOIN tutorial.crunchbase_acquisitions acquisitions
+    ON companies.permalink = acquisitions.company_permalink
+    
+    
+    
+-- Join with multiple keys
+SELECT companies.permalink,
+       companies.name,
+       investments.company_name,
+       investments.company_permalink
+  FROM tutorial.crunchbase_companies companies
+  LEFT JOIN tutorial.crunchbase_investments_part1 investments
+    ON companies.permalink = investments.company_permalink
+   AND companies.name = investments.company_name
+   
+   
+-- Selg Join
+SELECT DISTINCT japan_investments.company_name,
+       japan_investments.company_permalink
+  FROM tutorial.crunchbase_investments_part1 japan_investments
+  JOIN tutorial.crunchbase_investments_part1 gb_investments
+    ON japan_investments.company_name = gb_investments.company_name
+   AND gb_investments.investor_country_code = 'GBR'
+   AND gb_investments.funded_at > japan_investments.funded_at
+ WHERE japan_investments.investor_country_code = 'JPN'
+ ORDER BY 1
+ 
+ 
+ 
