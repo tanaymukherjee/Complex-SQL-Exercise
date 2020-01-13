@@ -1,0 +1,36 @@
+-- Case1:
+
+# AVAILABLE SEATS
+
+You have a restaurant with 1,000 seats. Whenever a waiter puts 
+someone at a seat, he logs it in a table of seats (I was going to say “table
+of tables” and make this impossible to read). Likewise, when a guest
+finishes a meal, you remove the guest’s seat number. You want to write a
+query to produce a list of the available seats in the restaurant, set up in
+blocks by their starting and ending seat numbers. Oh yes, the gimmick
+is that the database resides on a personal digital assistant and not a
+mainframe computer.
+
+As part of the exercise, you must do this with the smallest amount of
+storage possible. Assume each seat number is an integer.
+
+The first thought is to add a (free/occupied) flag column next to the
+seat-number column. The available seating query would be based on the
+flag. This would be 1,000 rows of one integer and one character for the
+whole restaurant and would work pretty well, but we have that minimal
+storage requirement. Darn! 
+
+ SELECT (R1.seat + 1) AS start,
+ (MIN(R2.seat) - 1) AS finish
+ FROM Restaurant AS R1
+ INNER JOIN
+ Restaurant AS R2
+ ON R2.seat > R1.seat
+ GROUP BY R1.seat
+HAVING (R1.seat + 1) < MIN(R2.seat);
+
+
+--------------------
+
+
+-- Case 2:
