@@ -21,7 +21,7 @@ whole restaurant and would work pretty well, but we have that minimal
 storage requirement. Darn! 
 
 Answer:
- SELECT (R1.seat + 1) AS start,
+SELECT (R1.seat + 1) AS start,
  (MIN(R2.seat) - 1) AS finish
  FROM Restaurant AS R1
  INNER JOIN
@@ -72,6 +72,7 @@ district 3, do we drop it from the report or not? Let us make the decision,
 since this is just a puzzle and not a production system, that the boss
 meant the three largest sales in each district, without regard to who the
 salespeople were. That query can be:
+
 SELECT *
  FROM SalesData AS S0
  WHERE sales_amt IN (SELECT S1.sales_amt
@@ -105,6 +106,7 @@ SELECT DISTINCT district_nbr, sales_person
  WHERE S0.district_nbr = S1.district_nbr
  AND S0.sales_amt <= S1.sales_amt
  HAVING COUNT(DISTINCT S0.sales_amt) <= 3);
+ 
 and get these results. Please notice that you are getting the three largest
 sales.
 
