@@ -298,6 +298,34 @@ new release of your system, which will happen much more often than
 releases of your schema information tables.
 
 
- --------------------
+--------------------
 
 -- Case 6:
+
+# Permutations
+
+permutation is an ordered arrangement of
+elements of a set. For example, if I have the set {1, 2, 3}, the
+permutations of those elements are (1, 2, 3), (1, 3, 2), (2, 1, 3), (2, 3, 1),
+(3, 1, 2), and (3, 2, 1). The rule is that for (n) elements, you have a
+factorial number (n!) of permutations. What I would like is a query that
+returns one permutation per row from a set of the first seven integers
+(that will give us 5,040 rows). Try to make the answer easy to generalize
+for more numbers.
+
+Answer:
+SELECT E1.i, E2.i, E3.i, E4.i, E5.i, E6.i, E7.i
+FROM Elements AS E1, Elements AS E2, Elements AS E3,
+Elements AS E4, Elements AS E5, Elements AS E6,
+Elements AS E7
+WHERE (E1.i + E2.i + E3.i + E4.i + E5.i + E6.i + E7.i)
+= 28
+AND E1.i NOT IN (E2.i, E3.i, E4.i, E5.i, E6.i, E7.i)
+AND E2.i NOT IN (E1.i, E3.i, E4.i, E5.i, E6.i, E7.i)
+AND E3.i NOT IN (E1.i, E2.i, E4.i, E5.i, E6.i, E7.i)
+AND E4.i NOT IN (E1.i, E2.i, E3.i, E5.i, E6.i, E7.i)
+AND E5.i NOT IN (E1.i, E2.i, E3.i, E4.i, E6.i, E7.i)
+AND E6.i NOT IN (E1.i, E2.i, E3.i, E4.i, E5.i, E7.i)
+AND E7.i NOT IN (E1.i, E2.i, E3.i, E4.i, E5.i, E6.i);
+
+--------------------
