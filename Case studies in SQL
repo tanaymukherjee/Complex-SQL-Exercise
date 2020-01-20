@@ -268,3 +268,36 @@ SELECT check_amt,
  
  
  --------------------
+
+-- Case 5:
+
+# Multiple null rows in multile columns
+
+Imagine you are importing data from a source that sends you
+rows with all NULLs. And, no, the source cannot be modified to get rid of
+these rows on the other side of the system. After staging this data into
+SQL, you want to identify the NULL rows and remove them.
+
+Answer:
+DELETE FROM Staging
+WHERE COALESCE
+(col1, col2, col3, .., col100) IS NULL;
+
+This is about as fast as it will get. It also demonstrates that it helps to
+read the manual and find out what the SQL vendors have given you.
+Most of these utilities will define a <column> and its options (NULL-able,
+DEFAULT, key, indexed, etc.) in one row, so you just lift out the name and
+add a comma after it.
+It takes less than five seconds, even for large tables. You will spend
+more time writing code that will probably fail when the next release of
+our database comes out and the schema information tables are a little
+different.
+However, you will have to remember to update your SQL every time
+there is a change to the table or your query will fail every time you have a
+new release of your system, which will happen much more often than
+releases of your schema information tables.
+
+
+ --------------------
+
+-- Case 6:
