@@ -5,3 +5,5 @@ This includes complex queries involving basic DML statements and joins alongside
 
 Ref:
 https://mode.com/sql-tutorial/sql-window-functions/
+
+Also, shared some real time case studies that help us identify the use and complex implementation of seemingly much easy SQL techiniques in a complicated scenario.
