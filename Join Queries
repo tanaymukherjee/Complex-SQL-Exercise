@@ -85,3 +85,10 @@ SELECT DISTINCT japan_investments.company_name,
  
  
  
+ -- Cartesian product or cross join
+SELECT Student.NAME, Student.AGE, StudentCourse.COURSE_ID
+FROM Student
+CROSS JOIN StudentCourse;
+
+The CARTESIAN JOIN is also known as CROSS JOIN. In a CARTESIAN JOIN there is a join for each row of one table
+to every row of another table. This usually happens when the matching column or WHERE condition is not specified.
