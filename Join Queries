@@ -72,7 +72,7 @@ SELECT companies.permalink,
    AND companies.name = investments.company_name
    
    
--- Selg Join
+-- Self Join
 SELECT DISTINCT japan_investments.company_name,
        japan_investments.company_permalink
   FROM tutorial.crunchbase_investments_part1 japan_investments
